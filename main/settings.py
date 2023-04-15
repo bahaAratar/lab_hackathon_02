@@ -44,9 +44,11 @@ INSTALLED_APPS = [
     #module
     'rest_framework',
     'rest_framework_simplejwt',
+    'django_filters',
 
     #app
     'applications.account',
+    'applications.movie'
 ]
 
 MIDDLEWARE = [
@@ -137,6 +139,9 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
     'DEFAULT_AUTHENTICATION_CLASSES':[
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
