@@ -27,21 +27,15 @@ class MovieDetailAPIView(APIView):
         movie = Movie.objects.get(id=pk)
         serializer = MovieDetailSerializer(movie)
         return Response(serializer.data)
+    
 
 class MovieModelViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
     queryset = Movie.objects.all()
     serializer_class = MovieDetailSerializer
-
-    # filter_backends = (DjangoFilterBackend,)
     filterset_class = MovieFilter
-
     filter_backends = [SearchFilter, DjangoFilterBackend]
-    # search_fields = ['title', 'tags__name']
-    # filterset_fields = ['year', 'genres']
-
-    search_fields = ['title', 'tags']
-
+    search_fields = ['title', 'tags__name']
 
 
 class CategoryModelViewSet(viewsets.ModelViewSet):

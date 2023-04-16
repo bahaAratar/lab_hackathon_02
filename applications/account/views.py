@@ -1,18 +1,53 @@
+from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions, generics
-from .serializers import *
-from rest_framework.response import Response
 from rest_framework import status
-from django.contrib.auth import authenticate, get_user_model
-from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from applications.movie.models import Movie
+from .models import CustomUser
+from .serializers import *
 
-User = get_user_model()
+# User = get_user_model()
 
 class AccountModelViewset(ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = AccountSerializer
+
+    @action(detail=True, methods=['post'])
+    def favorite(self, request, pk=None):
+        user = self.get_object()
+        print(f'\n{request}\n')
+        movie = Movie.objects.get(id=pk)
+        user.favorite_movies.add(movie)
+        return Response({'status': 'Movie added to favorites'})
+
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        user = self.get_object()
+        movie = Movie.objects.get(id=pk)
+        user.likes_movies.add(movie)
+        return Response({'status': 'Movie liked'})
+    
+
+# class FavoriteAPIView(APIView):
+#     def get(self, request):
+#         # permission_classes = [IsAuthenticatedOrReadOnly]    
+#         user = Movie.objects.get()
+#         serializer = FavoritSerializer(user)
+#         return Response(serializer.data)
+    
+# class LikeAPIView(APIView):
+#     def get(self, request, pk):
+#         # permission_classes = [IsAuthenticatedOrReadOnly]    
+#         movie = Movie.objects.get(id=pk)
+#         serializer = LikeSerializer(movie)
+#         return Response(serializer.data)
+
 
 class RegisterAPIView(APIView):
     
@@ -44,29 +79,17 @@ class ChangePasswordAPIView(APIView):
             return Response({'detail': 'Invalid credentials.'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class ResetPasswordAPIView(APIView):
-
-#     def post(self, request):
-#         email = request.data.get('email')
-#         secret_word = request.data.get('secret_word')
-#         new_password = request.data.get('new_password')
-#         try:
-#             user = User.objects.get(email=email, secret_word=secret_word)
-#         except User.DoesNotExist:
-#             return Response({'detail': 'User not found.'}, status=status.HTTP_400_BAD_REQUEST)
-#         user.set_password(new_password)
-#         user.save()
-#         return Response({'detail': 'Password reset successful.'}, status=status.HTTP_200_OK)
-
 class ResetPasswordAPIView(APIView):
     def post(self, request):
         email = request.data.get('email')
         secret_word = request.data.get('secret_word')
         new_password = request.data.get('new_password')
         try:
-            user = User.objects.get(email=email, sekret_word=secret_word)
-        except User.DoesNotExist:
+            user = CustomUser.objects.get(email=email, sekret_word=secret_word)
+        except CustomUser.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         user.password = make_password(new_password)
         user.save()
         return Response({'message': 'Password reset successfully'})
+    
+

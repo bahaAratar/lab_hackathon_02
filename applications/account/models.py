@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.hashers import make_password
+from applications.movie.models import Movie
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
@@ -36,12 +37,13 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=200)
     sekret_word = models.CharField(max_length=50)
+    favorite_movies = models.ManyToManyField(Movie, related_name='favorited_by')
+    likes_movies = models.ManyToManyField(Movie, related_name='likes_by')
 
     first_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
 
     username = None
-    # is_active = models.BooleanField(default=False)
 
     objects = UserManager()
 

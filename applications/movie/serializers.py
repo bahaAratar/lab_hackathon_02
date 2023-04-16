@@ -11,16 +11,17 @@ class MovieDetailSerializer(serializers.ModelSerializer):
     directors = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
     actors = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
     genres = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
+    tags = serializers.SlugRelatedField(slug_field='name', read_only=True, many=True)
     
     class Meta:
         model = Movie
         fields = '__all__'
 
+
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = '__all__'
-
 
 
 class GenreSerializer(serializers.ModelSerializer):
@@ -42,3 +43,15 @@ class MovieFilterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         fields = '__all__'
+
+class FavoriteMovieSerializer(serializers.ModelSerializer):
+    is_favorite = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Movie
+        fields = '__all__'
+
+    def get_is_favorite(self, obj):
+        user = self.context['request'].user
+        print(f'\n{obj.favorites.filter(id=user.id).exists()}\n')
+        return obj.favorites.filter(id=user.id).exists()
