@@ -15,6 +15,7 @@ urlpatterns = [
     path('change-password/', ChangePasswordAPIView.as_view()),
     path('reset-password/', ResetPasswordAPIView.as_view()),
 
-
+    path('favorite/', FavoriteAPIView.as_view()),
+    
     path('', include(router.urls)),
 ]

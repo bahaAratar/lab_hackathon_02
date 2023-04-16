@@ -19,34 +19,31 @@ class AccountModelViewset(ModelViewSet):
     serializer_class = AccountSerializer
 
     @action(detail=True, methods=['post'])
-    def favorite(self, request, pk=None):
+    def favorite(self, request, pk):
         user = self.get_object()
         print(f'\n{request}\n')
         movie = Movie.objects.get(id=pk)
         user.favorite_movies.add(movie)
-        return Response({'status': 'Movie added to favorites'})
+        return Response({'status': 'Фильм добавлен в избранные'})
 
     @action(detail=True, methods=['post'])
-    def like(self, request, pk=None):
+    def like(self, request, pk):
         user = self.get_object()
         movie = Movie.objects.get(id=pk)
+        print(f'\n{movie.likes}\n')
+        movie.likes += 1
+        movie.save()
         user.likes_movies.add(movie)
-        return Response({'status': 'Movie liked'})
+        return Response({'status': 'Лайк поставлен'})
     
 
-# class FavoriteAPIView(APIView):
-#     def get(self, request):
-#         # permission_classes = [IsAuthenticatedOrReadOnly]    
-#         user = Movie.objects.get()
-#         serializer = FavoritSerializer(user)
-#         return Response(serializer.data)
-    
-# class LikeAPIView(APIView):
-#     def get(self, request, pk):
-#         # permission_classes = [IsAuthenticatedOrReadOnly]    
-#         movie = Movie.objects.get(id=pk)
-#         serializer = LikeSerializer(movie)
-#         return Response(serializer.data)
+class FavoriteAPIView(APIView):
+    def get(self, request):
+        permission_classes = [IsAuthenticated]    
+        user = request.user
+        serializer = FavoritSerializer(user)
+        return Response(serializer.data)
+
 
 
 class RegisterAPIView(APIView):

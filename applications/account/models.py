@@ -37,9 +37,9 @@ class CustomUser(AbstractUser):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=200)
     sekret_word = models.CharField(max_length=50)
-    favorite_movies = models.ManyToManyField(Movie, related_name='favorited_by')
-    likes_movies = models.ManyToManyField(Movie, related_name='likes_by')
 
+    favorite_movies = models.ManyToManyField(Movie, related_name='favorited_by', blank=True)
+    likes_movies = models.ManyToManyField(Movie, related_name='likes_by', blank=True)
     first_name = models.CharField(max_length=50, null=True, blank=True)
     last_name = models.CharField(max_length=50, null=True, blank=True)
 

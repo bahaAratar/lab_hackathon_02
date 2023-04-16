@@ -65,7 +65,7 @@ class Movie(models.Model):
     directors = models.ManyToManyField(Actor, verbose_name="режиссер", related_name="film_director")
     actors = models.ManyToManyField(Actor, verbose_name="актеры", related_name="film_actor")
     genres = models.ManyToManyField(Genre, verbose_name="жанры", related_name="film_genres")
-    # likes = models.ManyToManyField(User, blank=True, related_name='liked_movies')
+    likes = models.PositiveIntegerField('Лайки', default=0)
     # favorites = models.ManyToManyField(User, blank=True, related_name='favorite_movies')
     
     def __str__(self) -> str:
